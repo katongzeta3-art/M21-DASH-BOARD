@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบเช็คชีตตรวจสอบเครื่องจักร</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 25px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: center;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        td:nth-child(2) {
+            text-align: left;
+        }
+        input[type="text"].note-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn-submit {
+            background-color: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            font-weight: bold;
+        }
+        .btn-submit:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>ใบตรวจสอบเครื่องจักรประจำวัน (Daily Machine Check Sheet)</h2>
+    
+    <form id="checkSheetForm">
+        <div class="form-group">
+            <label for="machineName">ชื่อเครื่องจักร / รหัสเครื่อง:</label>
+            <input type="text" id="machineName" required placeholder="เช่น CNC-01 หรือ เครื่องปั๊มโลหะ A">
+        </div>
+        
+        <div class="form-group">
+            <label for="inspector">ชื่อผู้ตรวจสอบ:</label>
+            <input type="text" id="inspector" required placeholder="ระบุชื่อ-นามสกุล">
+        </div>
+
+        <div class="form-group">
+            <label for="checkDate">วันที่ตรวจสอบ:</label>
+            <input type="date" id="checkDate" required>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ลำดับ</th>
+                    <th>รายการตรวจสอบ</th>
+                    <th>ปกติ</th>
+                    <th>ผิดปกติ</th>
+                    <th>หมายเหตุ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>ระดับน้ำมันหล่อลื่นและระบบหล่อเย็น</td>
+                    <td><input type="radio" name="item1" value="Pass" checked></td>
+                    <td><input type="radio" name="item1" value="Fail"></td>
+                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>เสียงและการสั่นสะเทือนขณะทำงาน</td>
+                    <td><input type="radio" name="item2" value="Pass" checked></td>
+                    <td><input type="radio" name="item2" value="Fail"></td>
+                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>ความสะอาดรอบตัวเครื่องและพื้นที่ปฏิบัติงาน</td>
+                    <td><input type="radio" name="item3" value="Pass" checked></td>
+                    <td><input type="radio" name="item3" value="Fail"></td>
+                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>ระบบความปลอดภัยและปุ่ม Emergency Stop</td>
+                    <td><input type="radio" name="item4" value="Pass" checked></td>
+                    <td><input type="radio" name="item4" value="Fail"></td>
+                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="submit" class="btn-submit">บันทึกข้อมูลการตรวจสอบ</button>
+    </form>
+</div>
+
+<script>
+    // กำหนดวันที่ปัจจุบันให้ช่องวันที่โดยอัตโนมัติ
+    document.getElementById('checkDate').valueAsDate = new Date();
+
+    document.getElementById('checkSheetForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const machine = document.getElementById('machineName').value;
+        const inspector = document.getElementById('inspector').value;
+        const date = document.getElementById('checkDate').value;
+
+        alert(`บันทึกข้อมูลของเครื่อง "${machine}" โดยคุณ "${inspector}" ประจำวันที่ ${date} สำเร็จเรียบร้อยแล้ว!`);
+        
+        // สามารถเพิ่มโค้ดส่งข้อมูลไปเก็บบนฐานข้อมูลหรือ Cloud ในอนาคตได้ตรงนี้
+    });
+</script>
+
+</body>
+</html>
