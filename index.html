@@ -1,169 +1,1116 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบเช็คชีตตรวจสอบเครื่องจักร</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-        h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #555;
-        }
-        input[type="text"], input[type="date"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            margin-bottom: 25px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
-        }
-        th {
-            background-color: #3498db;
-            color: white;
-        }
-        td:nth-child(2) {
-            text-align: left;
-        }
-        input[type="text"].note-input {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-        .btn-submit {
-            background-color: #2ecc71;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: bold;
-        }
-        .btn-submit:hover {
-            background-color: #27ae60;
-        }
-    </style>
+  <base target="_top">
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+      color: #10213d;
+      background: #f4f7fb;
+    }
+
+    .container {
+      max-width: 1900px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      margin: 7px 0 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .filter-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    select,
+    button {
+      height: 40px;
+      padding: 0 14px;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+
+    select {
+      min-width: 175px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #1e293b;
+    }
+
+    button {
+      border: 0;
+      background: #0f766e;
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #115e59;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(225px, 1fr));
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      min-height: 122px;
+      padding: 22px 25px;
+      border-left: 7px solid #f59e0b;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, .10);
+    }
+
+    .blue { border-left-color: #2563eb; }
+    .purple { border-left-color: #7c3aed; }
+    .green { border-left-color: #65a30d; }
+    .pink { border-left-color: #db2777; }
+    .teal { border-left-color: #0891b2; }
+    .gray { border-left-color: #64748b; }
+
+    .card-label {
+      color: #5e7699;
+      font-size: 16px;
+    }
+
+    .card-value {
+      margin-top: 12px;
+      color: #071a36;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .total-cards {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(150px, 1fr));
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .total-card {
+      padding: 16px;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, .08);
+    }
+
+    .total-label {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .total-value {
+      margin-top: 7px;
+      color: #0f172a;
+      font-size: 21px;
+      font-weight: 700;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .panel {
+      min-width: 0;
+      padding: 20px;
+      overflow: hidden;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 5px 16px rgba(15, 23, 42, .08);
+    }
+
+    .panel h2 {
+      margin: 0 0 14px;
+      color: #243b63;
+      font-size: 19px;
+    }
+
+    .chart {
+      width: 100%;
+      height: 440px;
+    }
+
+    .upload-area {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 150px;
+      padding: 24px;
+      border: 2px dashed #94a3b8;
+      border-radius: 14px;
+      background: #f8fafc;
+      text-align: center;
+      cursor: pointer;
+    }
+
+    .upload-area:hover,
+    .upload-area.drag-over {
+      border-color: #0f766e;
+      background: #f0fdfa;
+    }
+
+    .upload-area input {
+      display: none;
+    }
+
+    .upload-icon {
+      font-size: 32px;
+    }
+
+    .upload-title {
+      margin-top: 8px;
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .upload-note {
+      margin-top: 6px;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .upload-description,
+    .image-description-input {
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      font-family: Arial, sans-serif;
+      color: #1e293b;
+      resize: vertical;
+    }
+
+    .upload-description {
+      min-height: 76px;
+      margin-top: 14px;
+      padding: 11px;
+      font-size: 14px;
+    }
+
+    .image-description-input {
+      min-height: 62px;
+      margin-top: 10px;
+      padding: 8px;
+      font-size: 12px;
+    }
+
+    .upload-status {
+      display: none;
+      margin-top: 14px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .image-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .image-card {
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: 0 3px 10px rgba(15, 23, 42, .08);
+    }
+
+    .image-card img {
+      display: block;
+      width: 100%;
+      height: 190px;
+      cursor: zoom-in;
+      object-fit: cover;
+      background: #e2e8f0;
+    }
+
+    .image-info {
+      padding: 11px;
+    }
+
+    .image-name {
+      overflow: hidden;
+      color: #1e293b;
+      font-size: 13px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .image-date {
+      margin-top: 5px;
+      color: #64748b;
+      font-size: 11px;
+    }
+
+    .image-action-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .delete-btn {
+      background: #e11d48;
+    }
+
+    .delete-btn:hover {
+      background: #be123c;
+    }
+
+    .image-modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      inset: 0;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(15, 23, 42, .84);
+    }
+
+    .image-modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: min(100%, 1150px);
+      max-height: 92vh;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .4);
+    }
+
+    .modal-close {
+      position: absolute;
+      z-index: 2;
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 50%;
+      background: rgba(15, 23, 42, .8);
+      color: #fff;
+      font-size: 26px;
+      line-height: 40px;
+    }
+
+    .modal-close:hover {
+      background: #e11d48;
+    }
+
+    .modal-image {
+      display: block;
+      width: 100%;
+      max-height: 75vh;
+      background: #0f172a;
+      object-fit: contain;
+    }
+
+    .modal-info {
+      padding: 15px 18px;
+      background: #fff;
+    }
+
+    .modal-title {
+      color: #0f172a;
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .modal-description {
+      margin-top: 7px;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .empty,
+    .loading,
+    .error,
+    .no-images {
+      padding: 50px 20px;
+      color: #64748b;
+      text-align: center;
+    }
+
+    .no-images {
+      grid-column: 1 / -1;
+    }
+
+    .error {
+      color: #b91c1c;
+    }
+
+    @media (max-width: 1350px) {
+      .total-cards {
+        grid-template-columns: repeat(3, minmax(150px, 1fr));
+      }
+
+      .chart-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 750px) {
+      body {
+        padding: 14px;
+      }
+
+      .total-cards,
+      .chart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .chart {
+        height: 430px;
+      }
+
+      .filter-area {
+        width: 100%;
+      }
+
+      select {
+        flex: 1;
+      }
+    }
+  </style>
 </head>
+
 <body>
+  <div class="container">
+    <div class="header">
+      <div>
+        <h1>M21 DASHBOARD</h1>
+        <p class="subtitle">SUMMARY PRODUCTIVITY</p>
+      </div>
 
-<div class="container">
-    <h2>ใบตรวจสอบเครื่องจักรประจำวัน (Daily Machine Check Sheet)</h2>
-    
-    <form id="checkSheetForm">
-        <div class="form-group">
-            <label for="machineName">ชื่อเครื่องจักร / รหัสเครื่อง:</label>
-            <input type="text" id="machineName" required placeholder="เช่น CNC-01 หรือ เครื่องปั๊มโลหะ A">
-        </div>
-        
-        <div class="form-group">
-            <label for="inspector">ชื่อผู้ตรวจสอบ:</label>
-            <input type="text" id="inspector" required placeholder="ระบุชื่อ-นามสกุล">
-        </div>
+      <div class="filter-area">
+        <label for="monthSelect">Select:</label>
+        <select id="monthSelect"></select>
+        <button type="button" onclick="loadDashboard()">Show</button>
+      </div>
+    </div>
 
-        <div class="form-group">
-            <label for="checkDate">วันที่ตรวจสอบ:</label>
-            <input type="date" id="checkDate" required>
-        </div>
+    <div id="dashboardContent">
+      <div class="loading">Loading Dashboard...</div>
+    </div>
+  </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>ลำดับ</th>
-                    <th>รายการตรวจสอบ</th>
-                    <th>ปกติ</th>
-                    <th>ผิดปกติ</th>
-                    <th>หมายเหตุ</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>ระดับน้ำมันหล่อลื่นและระบบหล่อเย็น</td>
-                    <td><input type="radio" name="item1" value="Pass" checked></td>
-                    <td><input type="radio" name="item1" value="Fail"></td>
-                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>เสียงและการสั่นสะเทือนขณะทำงาน</td>
-                    <td><input type="radio" name="item2" value="Pass" checked></td>
-                    <td><input type="radio" name="item2" value="Fail"></td>
-                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
-                </tr>
-                <tr>
-                    <td>3</td>
-                    <td>ความสะอาดรอบตัวเครื่องและพื้นที่ปฏิบัติงาน</td>
-                    <td><input type="radio" name="item3" value="Pass" checked></td>
-                    <td><input type="radio" name="item3" value="Fail"></td>
-                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
-                </tr>
-                <tr>
-                    <td>4</td>
-                    <td>ระบบความปลอดภัยและปุ่ม Emergency Stop</td>
-                    <td><input type="radio" name="item4" value="Pass" checked></td>
-                    <td><input type="radio" name="item4" value="Fail"></td>
-                    <td><input type="text" class="note-input" placeholder="ระบุเพิ่มเติม (ถ้ามี)"></td>
-                </tr>
-            </tbody>
-        </table>
+  <div id="imageModal" class="image-modal">
+    <div class="modal-content">
+      <button id="modalCloseButton" type="button" class="modal-close">×</button>
+      <img id="modalImage" class="modal-image" src="" alt="">
+      <div class="modal-info">
+        <div id="modalTitle" class="modal-title"></div>
+        <div id="modalDescription" class="modal-description"></div>
+      </div>
+    </div>
+  </div>
 
-        <button type="submit" class="btn-submit">บันทึกข้อมูลการตรวจสอบ</button>
-    </form>
-</div>
-
-<script>
-    // กำหนดวันที่ปัจจุบันให้ช่องวันที่โดยอัตโนมัติ
-    document.getElementById('checkDate').valueAsDate = new Date();
-
-    document.getElementById('checkSheetForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const machine = document.getElementById('machineName').value;
-        const inspector = document.getElementById('inspector').value;
-        const date = document.getElementById('checkDate').value;
-
-        alert(`บันทึกข้อมูลของเครื่อง "${machine}" โดยคุณ "${inspector}" ประจำวันที่ ${date} สำเร็จเรียบร้อยแล้ว!`);
-        
-        // สามารถเพิ่มโค้ดส่งข้อมูลไปเก็บบนฐานข้อมูลหรือ Cloud ในอนาคตได้ตรงนี้
+  <script>
+    google.charts.load('current', {
+      packages: ['corechart']
     });
-</script>
 
+    let currentData = null;
+    let currentImages = [];
+
+    google.charts.setOnLoadCallback(loadMonths);
+
+    document.getElementById('modalCloseButton')
+      .addEventListener('click', closeImageModal);
+
+    document.getElementById('imageModal')
+      .addEventListener('click', event => {
+        if (event.target.id === 'imageModal') {
+          closeImageModal();
+        }
+      });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') {
+        closeImageModal();
+      }
+    });
+
+    function loadMonths() {
+      google.script.run
+        .withSuccessHandler(months => {
+          const select = document.getElementById('monthSelect');
+
+          select.innerHTML = '';
+
+          if (!months || !months.length) {
+            select.innerHTML = '<option value="">No data</option>';
+            showEmpty('ไม่พบข้อมูลวันที่ในคอลัมน์ A');
+            return;
+          }
+
+          months.forEach(month => {
+            const option = document.createElement('option');
+
+            option.value = month.value;
+            option.textContent = month.label;
+
+            select.appendChild(option);
+          });
+
+          loadDashboard();
+        })
+        .withFailureHandler(showError)
+        .getAvailableMonths();
+    }
+
+    function loadDashboard() {
+      const month = document.getElementById('monthSelect').value;
+
+      if (!month) return;
+
+      document.getElementById('dashboardContent').innerHTML =
+        '<div class="loading">Loading Dashboard...</div>';
+
+      google.script.run
+        .withSuccessHandler(data => {
+          currentData = data;
+          renderDashboard(data);
+        })
+        .withFailureHandler(showError)
+        .getDashboardData(month);
+    }
+
+    function renderDashboard(data) {
+      const s = data.summary;
+      const t = data.totals;
+
+      document.getElementById('dashboardContent').innerHTML = `
+        <div class="cards">
+          <div class="card">
+            <div class="card-label">Mold Rate MTD</div>
+            <div class="card-value">${formatNumber(s.moldRate, 2)}</div>
+          </div>
+          <div class="card blue">
+            <div class="card-label">Uptime MTD</div>
+            <div class="card-value">${formatNumber(s.uptime, 2)}%</div>
+          </div>
+          <div class="card purple">
+            <div class="card-label">B/D MTD</div>
+            <div class="card-value">${formatNumber(s.bd, 2)}%</div>
+          </div>
+          <div class="card green">
+            <div class="card-label">Idle Mold MTD</div>
+            <div class="card-value">${formatNumber(s.idleMold, 2)}%</div>
+          </div>
+          <div class="card pink">
+            <div class="card-label">Idle Melt MTD</div>
+            <div class="card-value">${formatNumber(s.idleMelt, 2)}%</div>
+          </div>
+          <div class="card teal">
+            <div class="card-label">Mold Reject MTD</div>
+            <div class="card-value">${formatNumber(s.moldReject, 2)}%</div>
+          </div>
+          <div class="card gray">
+            <div class="card-label">CT Loss MTD</div>
+            <div class="card-value">${formatNumber(s.ctLoss, 2)}%</div>
+          </div>
+        </div>
+
+        <div class="total-cards">
+          <div class="total-card">
+            <div class="total-label">Total Working Time</div>
+            <div class="total-value">${formatNumber(t.totalB, 2)}</div>
+          </div>
+          <div class="total-card">
+            <div class="total-label">Good Mold</div>
+            <div class="total-value">${formatNumber(t.runningC, 2)}</div>
+          </div>
+          <div class="total-card">
+            <div class="total-label">Mold Reject</div>
+            <div class="total-value">${formatNumber(t.rejectD, 2)}</div>
+          </div>
+          <div class="total-card">
+            <div class="total-label">B/D (hr.)</div>
+            <div class="total-value">${formatNumber(t.breakdownE, 2)}</div>
+          </div>
+          <div class="total-card">
+            <div class="total-label">Idle Mold (hr.)</div>
+            <div class="total-value">${formatNumber(t.idleMoldF, 2)}</div>
+          </div>
+          <div class="total-card">
+            <div class="total-label">Idle Melt (hr.)</div>
+            <div class="total-value">${formatNumber(t.idleMeltG, 2)}</div>
+          </div>
+        </div>
+
+        <div class="chart-grid">
+          <div class="panel"><h2>Mold Rate</h2><div id="moldRateChart" class="chart"></div></div>
+          <div class="panel"><h2>Uptime</h2><div id="uptimeChart" class="chart"></div></div>
+          <div class="panel"><h2>%B/D</h2><div id="bdChart" class="chart"></div></div>
+          <div class="panel"><h2>%Idle Mold</h2><div id="idleMoldChart" class="chart"></div></div>
+          <div class="panel"><h2>%Idle Melt</h2><div id="idleMeltChart" class="chart"></div></div>
+          <div class="panel"><h2>%Mold Reject</h2><div id="moldRejectChart" class="chart"></div></div>
+          <div class="panel"><h2>%CT Loss</h2><div id="ctLossChart" class="chart"></div></div>
+        </div>
+
+        <div class="panel">
+          <h2>Attach Images</h2>
+
+          <label id="uploadArea" class="upload-area" for="imageInput">
+            <input
+              id="imageInput"
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              multiple
+            >
+            <div>
+              <div class="upload-icon">📷</div>
+              <div class="upload-title">Click or drag images here to upload</div>
+              <div class="upload-note">รองรับ JPG, PNG, GIF และ WEBP</div>
+            </div>
+          </label>
+
+          <textarea
+            id="uploadDescription"
+            class="upload-description"
+            placeholder="ใส่คำอธิบายภาพ เช่น ปัญหาหน้างาน การแก้ไข หรือหมายเหตุ..."
+          ></textarea>
+
+          <div id="uploadStatus" class="upload-status"></div>
+          <div id="imageGallery" class="image-gallery"></div>
+        </div>
+      `;
+
+      drawAllCharts(data.monthlyRows || [], data.rows || []);
+      setupImageUpload();
+      loadDashboardImages();
+    }
+
+    function drawAllCharts(monthlyRows, dailyRows) {
+      drawBarChart('moldRateChart', monthlyRows, dailyRows, 'moldRate', 'Mold Rate', '#f59e0b', 116, 'Target ≥ 116');
+      drawBarChart('uptimeChart', monthlyRows, dailyRows, 'uptime', 'Uptime (%)', '#2563eb', 94, 'Target ≥ 94.0%');
+      drawBarChart('bdChart', monthlyRows, dailyRows, 'bd', '%B/D', '#7c3aed', 1.2, 'Target ≤ 1.2%');
+      drawBarChart('idleMoldChart', monthlyRows, dailyRows, 'idleMold', '%Idle Mold', '#65a30d', 4, 'Target ≤ 4.0%');
+      drawBarChart('idleMeltChart', monthlyRows, dailyRows, 'idleMelt', '%Idle Melt', '#db2777', 0.5, 'Target ≤ 0.5%');
+      drawBarChart('moldRejectChart', monthlyRows, dailyRows, 'moldReject', '%Mold Reject', '#0891b2', 0.3, 'Target ≤ 0.3%');
+      drawBarChart('ctLossChart', monthlyRows, dailyRows, 'ctLoss', '%CT Loss', '#64748b', null, '');
+    }
+
+    function drawBarChart(
+  elementId,
+  monthlyRows,
+  dailyRows,
+  field,
+  label,
+  chartColor,
+  targetValue,
+  targetLabel
+) {
+  const element = document.getElementById(elementId);
+
+  if (!element) return;
+
+  const data = new google.visualization.DataTable();
+
+  // ใช้ Series เดียว เพื่อให้ชื่อแกน X อยู่กึ่งกลางใต้แท่ง
+  data.addColumn('string', 'Period');
+  data.addColumn('number', label);
+  data.addColumn({
+    type: 'string',
+    role: 'annotation'
+  });
+
+  // เพิ่ม Series สำหรับเส้น Target เฉพาะกราฟที่มี Target
+  if (targetValue !== null) {
+    data.addColumn('number', targetLabel);
+  }
+
+  // ส่วนข้อมูลภาพรวมรายเดือน: Apr, May, Jun ...
+  monthlyRows.forEach(row => {
+    const value = row.hasData ? Number(row[field]) : null;
+
+    const chartRow = [
+      row.label,
+      value,
+      value === null ? null : formatNumber(value, 2)
+    ];
+
+    if (targetValue !== null) {
+      chartRow.push(value === null ? null : targetValue);
+    }
+
+    data.addRow(chartRow);
+  });
+
+  // เว้นช่องว่าง 1 ช่องระหว่างข้อมูลรายเดือนและข้อมูลรายวัน
+  if (monthlyRows.length > 0 && dailyRows.length > 0) {
+    const blankRow = [
+      '',
+      null,
+      null
+    ];
+
+    if (targetValue !== null) {
+      blankRow.push(null);
+    }
+
+    data.addRow(blankRow);
+  }
+
+  // ส่วนข้อมูลรายวันของเดือนที่เลือก
+  dailyRows.forEach(row => {
+    const value = Number(row[field]) || 0;
+
+    const chartRow = [
+      row.date,
+      value,
+      formatNumber(value, 2)
+    ];
+
+    if (targetValue !== null) {
+      chartRow.push(targetValue);
+    }
+
+    data.addRow(chartRow);
+  });
+
+  const chart = new google.visualization.ComboChart(element);
+
+  chart.draw(data, {
+    height: 440,
+    seriesType: 'bars',
+    colors: targetValue !== null
+      ? [chartColor, '#111827']
+      : [chartColor],
+
+    legend: {
+      position: 'top',
+      alignment: 'center',
+      textStyle: {
+        fontSize: 9
+      }
+    },
+
+    chartArea: {
+      left: 50,
+      top: targetValue !== null ? 72 : 62,
+      width: '82%',
+      height: '55%'
+    },
+
+    series: targetValue !== null ? {
+      0: {
+        type: 'bars',
+        color: chartColor
+      },
+      1: {
+        type: 'line',
+        color: '#111827',
+        lineWidth: 2,
+        pointSize: 0
+      }
+    } : {
+      0: {
+        type: 'bars',
+        color: chartColor
+      }
+    },
+
+    bar: {
+      groupWidth: '68%'
+    },
+
+    annotations: {
+      alwaysOutside: true,
+      stem: {
+        color: 'transparent',
+        length: 0
+      },
+      textStyle: {
+        color: '#111827',
+        fontSize: 8,
+        bold: true,
+        auraColor: 'none'
+      }
+    },
+
+    hAxis: {
+      slantedText: true,
+      slantedTextAngle: 90,
+      showTextEvery: 1,
+      textStyle: {
+        fontSize: 8,
+        bold: true
+      }
+    },
+
+    vAxis: {
+      gridlines: {
+        color: '#e5e7eb'
+      },
+      textStyle: {
+        fontSize: 9
+      }
+    }
+  });
+}
+
+    function setupImageUpload() {
+      const uploadArea = document.getElementById('uploadArea');
+      const imageInput = document.getElementById('imageInput');
+
+      imageInput.addEventListener('change', event => {
+        uploadImages(event.target.files);
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, event => {
+          event.preventDefault();
+          uploadArea.classList.add('drag-over');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, event => {
+          event.preventDefault();
+          uploadArea.classList.remove('drag-over');
+        });
+      });
+
+      uploadArea.addEventListener('drop', event => {
+        uploadImages(event.dataTransfer.files);
+      });
+    }
+
+    async function uploadImages(files) {
+      if (!files || !files.length) return;
+
+      const month = document.getElementById('monthSelect').value;
+      const descriptionInput = document.getElementById('uploadDescription');
+      const imageInput = document.getElementById('imageInput');
+
+      const imageFiles = Array.from(files).filter(file =>
+        file.type.startsWith('image/')
+      );
+
+      if (!imageFiles.length) {
+        showUploadStatus('กรุณาเลือกไฟล์รูปภาพ', true);
+        return;
+      }
+
+      let uploaded = 0;
+      const description = descriptionInput.value.trim();
+
+      for (let index = 0; index < imageFiles.length; index++) {
+        const file = imageFiles[index];
+
+        try {
+          showUploadStatus(`กำลังเตรียมรูป ${index + 1}/${imageFiles.length}: ${file.name}`);
+
+          const compressed = await compressImage(file);
+
+          showUploadStatus(`กำลังอัปโหลด ${index + 1}/${imageFiles.length}: ${file.name}`);
+
+          await uploadOneImage(compressed, month, description);
+
+          uploaded++;
+        } catch (error) {
+          console.error(error);
+          showUploadStatus(`อัปโหลดไม่สำเร็จ: ${file.name}`, true);
+        }
+      }
+
+      imageInput.value = '';
+      descriptionInput.value = '';
+
+      if (uploaded > 0) {
+        showUploadStatus(`อัปโหลดสำเร็จ ${uploaded} รูป`);
+        loadDashboardImages();
+      }
+    }
+
+    function uploadOneImage(fileData, month, description) {
+      return new Promise((resolve, reject) => {
+        google.script.run
+          .withSuccessHandler(resolve)
+          .withFailureHandler(reject)
+          .uploadDashboardImage(fileData, month, description);
+      });
+    }
+
+    function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onerror = () => reject(new Error('ไม่สามารถอ่านไฟล์รูปภาพได้'));
+
+        reader.onload = event => {
+          const image = new Image();
+
+          image.onerror = () => reject(new Error('ไม่สามารถเปิดไฟล์รูปภาพได้'));
+
+          image.onload = () => {
+            const maxSize = 1600;
+            let width = image.width;
+            let height = image.height;
+
+            if (width > maxSize || height > maxSize) {
+              const ratio = Math.min(maxSize / width, maxSize / height);
+              width = Math.round(width * ratio);
+              height = Math.round(height * ratio);
+            }
+
+            const canvas = document.createElement('canvas');
+
+            canvas.width = width;
+            canvas.height = height;
+
+            const context = canvas.getContext('2d');
+
+            context.fillStyle = '#ffffff';
+            context.fillRect(0, 0, width, height);
+            context.drawImage(image, 0, 0, width, height);
+
+            const dataUrl = canvas.toDataURL('image/jpeg', 0.82);
+
+            resolve({
+              name: file.name.replace(/\.[^.]+$/, '') + '.jpg',
+              mimeType: 'image/jpeg',
+              base64: dataUrl.split(',')[1]
+            });
+          };
+
+          image.src = event.target.result;
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function loadDashboardImages() {
+      const month = document.getElementById('monthSelect').value;
+
+      google.script.run
+        .withSuccessHandler(renderImageGallery)
+        .withFailureHandler(error => {
+          console.error(error);
+          showUploadStatus('ไม่สามารถโหลดรูปภาพได้', true);
+        })
+        .getDashboardImages(month);
+    }
+
+    function renderImageGallery(images) {
+      const gallery = document.getElementById('imageGallery');
+
+      currentImages = images || [];
+
+      if (!currentImages.length) {
+        gallery.innerHTML =
+          '<div class="no-images">ยังไม่มีรูปภาพสำหรับเดือนที่เลือก</div>';
+        return;
+      }
+
+      gallery.innerHTML = currentImages.map((image, index) => `
+        <div class="image-card">
+          <img
+            src="${escapeHtml(image.thumbnailUrl)}"
+            alt="${escapeHtml(image.name)}"
+            title="คลิกเพื่อดูรูปขนาดใหญ่"
+            data-image-index="${index}"
+            class="gallery-image"
+          >
+
+          <div class="image-info">
+            <div class="image-name" title="${escapeHtml(image.name)}">
+              ${escapeHtml(image.name)}
+            </div>
+
+            <div class="image-date">
+              Uploaded: ${escapeHtml(image.createdAt)}
+            </div>
+
+            <textarea
+              id="description-${image.id}"
+              class="image-description-input"
+              placeholder="ใส่คำอธิบายรูปภาพ..."
+            >${escapeHtml(image.description)}</textarea>
+
+            <div class="image-action-row">
+              <button type="button" data-save-id="${image.id}">Save</button>
+              <button type="button" class="delete-btn" data-delete-id="${image.id}">Delete</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      gallery.querySelectorAll('.gallery-image').forEach(element => {
+        element.addEventListener('click', event => {
+          const index = Number(event.currentTarget.dataset.imageIndex);
+          openImageModal(currentImages[index]);
+        });
+      });
+
+      gallery.querySelectorAll('[data-save-id]').forEach(button => {
+        button.addEventListener('click', event => {
+          saveImageDescription(event.currentTarget.dataset.saveId);
+        });
+      });
+
+      gallery.querySelectorAll('[data-delete-id]').forEach(button => {
+        button.addEventListener('click', event => {
+          deleteImage(event.currentTarget.dataset.deleteId);
+        });
+      });
+    }
+
+    function openImageModal(image) {
+      const modal = document.getElementById('imageModal');
+      const modalImage = document.getElementById('modalImage');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalDescription = document.getElementById('modalDescription');
+
+      modalImage.src = '';
+      modalTitle.textContent = 'กำลังโหลดรูปภาพ...';
+      modalDescription.textContent =
+        image.description || 'ไม่มีคำอธิบายรูปภาพ';
+
+      modal.classList.add('show');
+      document.body.style.overflow = 'hidden';
+
+      google.script.run
+        .withSuccessHandler(fullImage => {
+          modalImage.src = fullImage.dataUrl;
+          modalImage.alt = fullImage.name || '';
+          modalTitle.textContent = fullImage.name || '';
+          modalDescription.textContent =
+            fullImage.description || 'ไม่มีคำอธิบายรูปภาพ';
+        })
+        .withFailureHandler(error => {
+          console.error(error);
+          modalTitle.textContent = 'ไม่สามารถเปิดรูปภาพได้';
+          modalDescription.textContent =
+            error.message || 'เกิดข้อผิดพลาดขณะโหลดรูปภาพ';
+        })
+        .getDashboardImageFullData(image.id);
+    }
+
+    function closeImageModal() {
+      document.getElementById('imageModal').classList.remove('show');
+      document.getElementById('modalImage').src = '';
+      document.body.style.overflow = '';
+    }
+
+    function saveImageDescription(fileId) {
+      const input = document.getElementById(`description-${fileId}`);
+
+      google.script.run
+        .withSuccessHandler(() => {
+          showUploadStatus('บันทึกคำอธิบายแล้ว');
+          loadDashboardImages();
+        })
+        .withFailureHandler(() => {
+          showUploadStatus('ไม่สามารถบันทึกคำอธิบายได้', true);
+        })
+        .updateImageDescription(fileId, input.value.trim());
+    }
+
+    function deleteImage(fileId) {
+      if (!confirm('ต้องการลบรูปภาพนี้ใช่หรือไม่?')) return;
+
+      google.script.run
+        .withSuccessHandler(() => {
+          showUploadStatus('ลบรูปภาพแล้ว');
+          loadDashboardImages();
+        })
+        .withFailureHandler(() => {
+          showUploadStatus('ไม่สามารถลบรูปภาพได้', true);
+        })
+        .deleteDashboardImage(fileId);
+    }
+
+    function showUploadStatus(message, isError = false) {
+      const status = document.getElementById('uploadStatus');
+
+      if (!status) return;
+
+      status.style.display = 'block';
+      status.style.color = isError ? '#e11d48' : '#0f766e';
+      status.textContent = message;
+    }
+
+    function formatNumber(value, decimals) {
+      return (Number(value) || 0).toLocaleString('en-US', {
+        minimumFractionDigits: decimals,
+        maximumFractionDigits: decimals
+      });
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function showEmpty(message) {
+      document.getElementById('dashboardContent').innerHTML =
+        `<div class="empty">${message}</div>`;
+    }
+
+    function showError(error) {
+      console.error(error);
+
+      document.getElementById('dashboardContent').innerHTML =
+        `<div class="error">เกิดข้อผิดพลาด: ${error.message || error}</div>`;
+    }
+
+    window.addEventListener('resize', () => {
+      if (!currentData) return;
+
+      drawAllCharts(
+        currentData.monthlyRows || [],
+        currentData.rows || []
+      );
+    });
+  </script>
 </body>
 </html>
